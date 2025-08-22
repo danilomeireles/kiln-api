@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import ICMService, { ICMData } from '../services/icm.service';
 import fetch from 'node-fetch';
 
 export class CommunicationsController {
@@ -85,13 +84,6 @@ export class CommunicationsController {
       console.error('Error saving ICM data:', error);
       res.status(500).json({ error: 'failed' });
     }
-  }
-
-  async saveICMData2(req: Request, res: Response): Promise<void> {
-    const { caseId, payload } = req.body as Partial<ICMData>;
-    const input: ICMData = { caseId: caseId, payload: payload };
-    const record = await ICMService.saveICMData(input);
-    res.json(record);
   }
 
   loadICMData(req: Request, res: Response): void {
