@@ -1,6 +1,6 @@
-import fetch from 'node-fetch';
 import L from '../../common/logger';
 import * as process from 'node:process';
+import { ICMClient } from './icm.client';
 
 interface SaveICMDataPayload {
   attachmentId: string;
@@ -25,6 +25,12 @@ interface SaveICMDataResult {
 }
 
 export class ICMService {
+  private icmClient: ICMClient;
+
+  constructor() {
+    this.icmClient = new ICMClient();
+  }
+
   async saveICMData(
     data: SaveICMDataRequest,
     token?: string
@@ -55,25 +61,8 @@ export class ICMService {
         L.warn('No authentication provided for ICM data save');
       }
 
-      const saveDataICMEndpoint =
-        process.env.COMM_API_SAVEDATA_ICM_ENDPOINT_URL;
-
-      if (!saveDataICMEndpoint) {
-        return {
-          success: false,
-          error: 'CommunicationLayer API endpoint not configured',
-          status: 500,
-        };
-      }
-
-      // Call CommunicationLayer API
-      const response = await fetch(saveDataICMEndpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      });
+      // Use the ICMClient saveICMData method instead of direct fetch
+      const response = await this.icmClient.saveICMData(payload);
 
       if (response.ok) {
         const result = await response.json();
@@ -86,7 +75,7 @@ export class ICMService {
         const errorData = (await response.json().catch(() => ({}))) as any;
         const errorMessage =
           errorData?.error || 'Error saving form. Please try again.';
-        L.error('CommunicationLayer API Error:', errorMessage);
+        L.error('ICMClient API Error:', errorMessage);
         return {
           success: false,
           error: errorMessage,
