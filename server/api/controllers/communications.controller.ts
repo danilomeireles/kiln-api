@@ -17,7 +17,7 @@ export class CommunicationsController {
 
   async saveICMData(req: Request, res: Response): Promise<void> {
     try {
-      const { attachmentId, OfficeName, username, token, savedForm } = req.body;
+      const { attachmentId, OfficeName, username, savedForm } = req.body;
 
       // Validate required fields
       if (!attachmentId || !OfficeName || !savedForm) {
@@ -27,6 +27,11 @@ export class CommunicationsController {
         });
         return;
       }
+
+      const authHeader = req.headers.authorization;
+      const token = authHeader?.startsWith('Bearer ')
+        ? authHeader.substring(7)
+        : authHeader;
 
       // TODO: Implement authentication/authorization when available
       // This should validate the token or username in the future
