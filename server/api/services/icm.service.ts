@@ -47,11 +47,12 @@ export class ICMService {
         savedForm,
       };
 
-      // Add authentication info if provided
       if (token) {
         payload.token = token;
-      } else if (username && username.length > 0) {
+      } else if (username?.trim()) {
         payload.username = username;
+      } else {
+        L.warn('No authentication provided for ICM data save');
       }
 
       const saveDataICMEndpoint =
@@ -93,10 +94,12 @@ export class ICMService {
         };
       }
     } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error occurred';
       L.error('Error saving ICM data:', error);
       return {
         success: false,
-        error: 'failed',
+        error: `Failed to save ICM data: ${errorMessage}`,
         status: 500,
       };
     }

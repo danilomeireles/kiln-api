@@ -23,7 +23,6 @@ export class CommunicationsController {
       : authHeader;
 
     // TODO: Implement authentication/authorization when available
-    // This should validate the token or username in the future
 
     const result = await ICMService.saveICMData(
       { attachmentId, OfficeName, username, savedForm },
